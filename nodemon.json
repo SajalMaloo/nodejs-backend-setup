@@ -1,0 +1,4 @@
+{
+  "ext": "{src,test,script}/**/*.{ts,js,json}",
+  "ignore": ["dist", "node_modules"]
+}
