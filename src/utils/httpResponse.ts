@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { tHttpResponse } from '../types/types';
+import logger from './logger';
 
-export const httpResponseUtil = (_req: Request, res: Response, resStatusCode: number, resMessage: string, data?: unknown) => {
+export const httpResponseUtil = (req: Request, res: Response, resStatusCode: number, resMessage: string, data?: unknown) => {
   const response: tHttpResponse = {
     success: true,
     statusCode: resStatusCode,
@@ -11,6 +12,5 @@ export const httpResponseUtil = (_req: Request, res: Response, resStatusCode: nu
 
   res.status(resStatusCode).json(response);
 
-  // eslint-disable-next-line no-console
-  console.log(res.statusCode, res.statusMessage);
+  logger.info(`${req.path}: request`, { meta: response });
 };
