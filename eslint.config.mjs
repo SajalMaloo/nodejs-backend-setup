@@ -9,19 +9,19 @@ export default tseslint.config({
     parserOptions: {
       project: true,
       tsconfigRootDir: import.meta.dirname,
-    }
+    },
   },
   files: ['**/*.ts'],
-  extends: [
-    eslint.configs.recommended,
-    ...tseslint.configs.recommendedTypeChecked,
-    eslintConfigPrettier
-],
+  extends: [eslint.configs.recommended, ...tseslint.configs.recommendedTypeChecked, eslintConfigPrettier],
   rules: {
     'no-console': 'error',
     'no-useless-catch': 0,
-    quotes: ['error', 'single', {
+    quotes: [
+      'error',
+      'single',
+      {
         allowTemplateLiterals: true,
-    }]
-  }
+      },
+    ],
+  },
 });
