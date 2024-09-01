@@ -1,24 +1,39 @@
 import { format } from 'winston';
-import { inspect } from 'util';
+import { blue, green, red, yellow } from 'colorette';
+
+const colorizeLevel = (level: string, message: string) => {
+  switch (level) {
+    case 'ERROR':
+      return red(message);
+    case 'INFO':
+      return blue(message);
+    case 'WARN':
+      return yellow(message);
+    default:
+      return level;
+  }
+};
 
 export const consoleLogFormat = format.printf((info) => {
-  const { level, message: customMessage, timestamp: customTimestamp, meta = {} } = info;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { level, message: customMessage, timestamp, meta = {} } = info;
 
   const customLevel = level.toUpperCase();
 
-  const customMeta = inspect(meta, {
-    showHidden: false,
-    depth: null,
-  });
+  const customTimestamp = green(`[${timestamp}]`);
 
-  return `${customLevel} [${customTimestamp}] ${customMessage}\nMeta: ${customMeta}\n`;
+  const customMeta = JSON.stringify({ details: meta as object });
+
+  return colorizeLevel(customLevel, `${customLevel} ${customTimestamp} ${customMessage}: ${customMeta}\n`);
 });
 
 export const fileLogFormat = format.printf((info) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { level, message, timestamp, meta = {} } = info;
 
   const logMeta: Record<string, unknown> = {};
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   for (const [key, value] of Object.entries(meta)) {
     if (value instanceof Error) {
       logMeta[key] = {
@@ -33,7 +48,9 @@ export const fileLogFormat = format.printf((info) => {
 
   const logData = {
     level: level.toUpperCase(),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     message,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     timestamp,
     meta: logMeta,
   };
