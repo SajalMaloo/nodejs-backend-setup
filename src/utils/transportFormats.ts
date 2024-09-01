@@ -16,15 +16,18 @@ const colorizeLevel = (level: string, message: string) => {
 
 export const consoleLogFormat = format.printf((info) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { level, message: customMessage, timestamp, meta = {} } = info;
+  const { level, message: customMessage, timestamp, meta } = info;
 
   const customLevel = level.toUpperCase();
 
   const customTimestamp = green(`[${timestamp}]`);
 
-  const customMeta = JSON.stringify({ details: meta as object });
+  const customMeta = Object.keys(meta as object)?.length ? JSON.stringify({ details: meta as object }) : undefined;
 
-  return colorizeLevel(customLevel, `${customLevel} ${customTimestamp} ${customMessage}: ${customMeta}\n`);
+  return colorizeLevel(
+    customLevel,
+    `${customLevel} ${customTimestamp} ${customMessage}${customMeta ? `: ${customMeta}` : ''}\n`,
+  );
 });
 
 export const fileLogFormat = format.printf((info) => {

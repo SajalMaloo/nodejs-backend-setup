@@ -4,10 +4,12 @@ import { eApplicationEnvironment } from '../constants/application';
 import { consoleLogFormat, fileLogFormat } from './transportFormats';
 import path from 'path';
 import { install } from 'source-map-support';
+import 'winston-mongodb';
+import { MongoDBTransportInstance } from 'winston-mongodb';
 
 install();
 
-export const consoleTransport = (): Array<ConsoleTransportInstance> => {
+const consoleTransport = (): Array<ConsoleTransportInstance> => {
   if (process.env.ENV !== eApplicationEnvironment.PRODUCTION) {
     return [
       new transports.Console({
@@ -19,7 +21,7 @@ export const consoleTransport = (): Array<ConsoleTransportInstance> => {
   return [];
 };
 
-export const fileTransport = (): Array<FileTransportInstance> => {
+const fileTransport = (): Array<FileTransportInstance> => {
   return [
     new transports.File({
       filename: path.join(__dirname, '../../logs', `${process.env.ENV}.log`),
@@ -29,9 +31,24 @@ export const fileTransport = (): Array<FileTransportInstance> => {
   ];
 };
 
+const mongoDbTransport = (): Array<MongoDBTransportInstance> => {
+  return [
+    new transports.MongoDB({
+      level: 'info',
+      db: process.env.DATABASE_URL as string,
+      metaKey: 'meta',
+      expireAfterSeconds: 3600 * 24 * 30,
+      options: {
+        useUnifiedTopology: true,
+      },
+      collection: 'application-logs',
+    }),
+  ];
+};
+
 export default createLogger({
   defaultMeta: {
     meta: {},
   },
-  transports: [...consoleTransport(), ...fileTransport()],
+  transports: [...consoleTransport(), ...fileTransport(), ...mongoDbTransport()],
 });
