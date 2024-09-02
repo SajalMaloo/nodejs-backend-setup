@@ -4,9 +4,11 @@ import router from './router/apiRouter';
 import { logV1Request } from './middleware/apiV1Handler';
 import { globalErrorHandler } from './middleware/globalErrorHandler';
 import notFoundHandler from './middleware/notFoundHandler';
+import helmet from 'helmet';
 
 const app: Application = express();
 
+app.use(helmet());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
