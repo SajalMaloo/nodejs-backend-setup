@@ -5,10 +5,18 @@ import { logV1Request } from './middleware/apiV1Handler';
 import { globalErrorHandler } from './middleware/globalErrorHandler';
 import notFoundHandler from './middleware/notFoundHandler';
 import helmet from 'helmet';
+import cors from 'cors';
 
 const app: Application = express();
 
 app.use(helmet());
+app.use(
+  cors({
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
+    origin: process.env.APP_BASE_URL,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
