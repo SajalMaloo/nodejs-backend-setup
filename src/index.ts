@@ -1,4 +1,5 @@
 import app from './app';
+import { initiRateLimiter } from './config/rateLimiter';
 import databaseService from './service/databaseService';
 import logger from './utils/logger';
 
@@ -7,7 +8,9 @@ const server = app.listen(process.env.PORT);
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 (async () => {
   try {
-    await databaseService.connect();
+    const connection = await databaseService.connect();
+
+    initiRateLimiter(connection);
 
     logger.info(`Application started successfully on ${process.env.PORT} at ${process.env.SERVER_URL}`);
   } catch (error) {
